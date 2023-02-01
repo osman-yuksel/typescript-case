@@ -1,91 +1,84 @@
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from './page.module.css'
+"use client";
 
-const inter = Inter({ subsets: ['latin'] })
+import { Inter } from "@next/font/google";
+import styles from "./page.module.css";
+import axios from "axios";
+import { useState, useEffect, useRef } from "react";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const [filter, setFilter] = useState<string>("");
+  const [posts, setPosts] = useState<Post[]>([] satisfies Post[]);
+
+  const filterInput = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    axios
+      .get("https://jsonplaceholder.typicode.com/posts")
+      .then((res) => {
+        console.log(res);
+        setPosts(res.data satisfies Post[]);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  }, []);
+
+  const handleSubmit = () => {
+    const value = filterInput.current?.value;
+    console.log(value);
+    setFilter(value || "");
+  };
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+      <div>
+        <input
+          type="text"
+          ref={filterInput}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSubmit();
+          }}
         />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
+        <button type="button" onClick={handleSubmit}>
+          Filter
+        </button>
       </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+      <div>
+        {posts ? (
+          <ul>
+            {posts.map((post, i) => {
+              if (post.body.includes(filter)) {
+                return (
+                  <li key={i}>
+                    <Card body={post.body} title={post.title} />
+                  </li>
+                );
+              }
+              return;
+            })}
+          </ul>
+        ) : (
+          <div>Loading...</div>
+        )}
       </div>
     </main>
-  )
+  );
 }
+
+const Card: React.FC<Pick<Post, "title" | "body">> = ({ body, title }) => {
+  return (
+    <div className={inter.className}>
+      <h1>{title}</h1>
+      <p>{body}</p>
+    </div>
+  );
+};
+
+type Post = {
+  title: string;
+  body: string;
+  id: number;
+  userId: number;
+};
