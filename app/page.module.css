@@ -1,7 +1,7 @@
 .main {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   padding: 6rem;
   min-height: 100vh;
@@ -69,7 +69,7 @@
   opacity: 0.6;
   font-size: 0.9rem;
   line-height: 1.5;
-  max-width: 34ch;
+  max-width: 60%;
 }
 
 .center {
@@ -153,6 +153,7 @@
 
 .highlighted {
   background: red;
+  white-space:pre;
 }
 
 /* Enable hover only on non-touch devices */
