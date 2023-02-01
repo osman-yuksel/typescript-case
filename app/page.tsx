@@ -48,7 +48,7 @@ export default function Home() {
         </button>
       </div>
       <div>
-        {posts ? (
+        {posts[0] ? (
           <ul>
             {posts.map((post, i) => {
               return (
@@ -61,7 +61,7 @@ export default function Home() {
             })}
           </ul>
         ) : (
-          <div>Loading...</div>
+          <div className={inter.className}>Loading...</div>
         )}
       </div>
     </main>
