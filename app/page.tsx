@@ -3,7 +3,7 @@
 import { Inter } from "@next/font/google";
 import styles from "./page.module.css";
 import axios from "axios";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -49,14 +49,13 @@ export default function Home() {
         {posts ? (
           <ul>
             {posts.map((post, i) => {
-              if (post.body.includes(filter)) {
-                return (
+              return (
+                post.body.includes(filter) && (
                   <li key={i}>
-                    <Card body={post.body} title={post.title} />
+                    <Card body={post.body} title={post.title} filter={filter} />
                   </li>
-                );
-              }
-              return;
+                )
+              );
             })}
           </ul>
         ) : (
@@ -67,11 +66,28 @@ export default function Home() {
   );
 }
 
-const Card: React.FC<Pick<Post, "title" | "body">> = ({ body, title }) => {
+const Card: React.FC<Pick<Post, "title" | "body"> & { filter: string }> = ({
+  body,
+  title,
+  filter,
+}) => {
   return (
-    <div className={inter.className}>
+    <div className={inter.className + " " + styles.card}>
       <h1>{title}</h1>
-      <p>{body}</p>
+      <p>
+        {filter
+          ? body.split(filter).map((subStr, i) => {
+              return i ? (
+                <Fragment key={i}>
+                  <span className={styles.highlighted}>{filter}</span>
+                  {subStr}
+                </Fragment>
+              ) : (
+                subStr
+              );
+            })
+          : body}
+      </p>
     </div>
   );
 };
