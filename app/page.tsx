@@ -33,15 +33,17 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      <div>
+      <div className={styles.filterform}>
         <input
+          className={styles.filterinput}
           type="text"
           ref={filterInput}
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSubmit();
           }}
+          tabIndex={2}
         />
-        <button type="button" onClick={handleSubmit}>
+        <button className={styles.button} type="button" onClick={handleSubmit}>
           Filter
         </button>
       </div>
@@ -72,7 +74,7 @@ const Card: React.FC<Pick<Post, "title" | "body"> & { filter: string }> = ({
   filter,
 }) => {
   return (
-    <div className={inter.className + " " + styles.card}>
+    <div className={inter.className + " " + styles.card} tabIndex={0}>
       <h1>{title}</h1>
       <p>
         {filter
